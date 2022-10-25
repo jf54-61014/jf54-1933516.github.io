@@ -1,0 +1,20 @@
+name: cse163
+channels:
+  - conda-forge
+dependencies:
+  - conda
+  - python=3.9
+  - descartes[version='>=1.1.0']
+  - flake8
+  - geopandas[version='>=0.9.0']
+  - geopandas-base[version='>=0.9.0']
+  - jupyterlab
+  - matplotlib
+  - mock
+  - numpy
+  - pandas
+  - requests
+  - scikit-image
+  - scikit-learn
+  - scipy
+  - seaborn
