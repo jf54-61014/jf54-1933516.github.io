@@ -1,0 +1,217 @@
+---
+title: "math381_hw7_code"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(Hmisc)
+library(wordcloud)
+```
+
+
+```{r}
+data_withYear <- read.csv(file="olympic_data.csv", head=TRUE, sep=",")
+data_withoutYear <- data_withYear[,-1]
+```
+
+```{r}
+#std standardization
+data_norm1 <- as.data.frame(scale(data_withoutYear))
+
+#Min-Max Normalization
+min_max_norm <- function(x) {
+    (x - min(x)) / (max(x) - min(x))
+}
+data_norm2 <- as.data.frame(lapply(data_withoutYear, min_max_norm))
+```
+
+```{r}
+#1d model
+##std normalization
+dist_norm1 = dist(data_norm1, method="minkowski", p=2)
+
+model1_norm1 <- cmdscale(dist_norm1,k=1)
+plot(model1_norm1, asp=1, ylim=c(-6,3), xlab="" ,ylab="distance")
+textplot(seq(1,25),model1_norm1, data_withYear$Year,
+         asp=1, ylim=c(-6,3), cex=0.6, 
+         xlab="" ,ylab="distance")
+
+model1_norm1_e <- cmdscale(dist_norm1,k=1, eig=TRUE)
+plot(model1_norm1_e$eig, xlab="index", ylab="Eigenvalues")
+
+d1_norm1_gof <- cmdscale(dist_norm1, k=1, eig=TRUE)$GOF
+
+plot(dist_norm1, dist(model1_norm1))
+
+md1_1 = dist(data.frame(model1_norm1, 0))
+mad1_1 <- mean(abs(as.matrix(dist_norm1)-as.matrix(md1_1)))
+mse1_1 <- mean((as.matrix(dist_norm1)-as.matrix(md1_1))^2)
+mxad1_1 <- max(abs(as.matrix(dist_norm1)-as.matrix(md1_1)))
+
+mad1_1
+mse1_1
+mxad1_1
+```
+
+```{r}
+#1d model
+##max-min normalization
+dist_norm2 = dist(data_norm2, method="minkowski", p=2)
+
+model1_norm2 <- cmdscale(dist_norm2,k=1)
+plot(model1_norm2, asp=1, ylim=c(-2,1), xlab="" ,ylab="")
+
+textplot(seq(1,25),model1_norm2, data_withYear$Year, 
+         asp=1, ylim=c(-2,1), cex=0.6,
+         xlab="" ,ylab="")
+
+model1_norm2_e <- cmdscale(dist_norm2,k=1, eig=TRUE)
+plot(model1_norm2_e$eig, xlab="index", ylab="Eigenvalues")
+
+d1_norm2_gof <- cmdscale(dist_norm2, k=1, eig=TRUE)$GOF
+
+plot(dist_norm2, dist(model1_norm2))
+
+md1_2 = dist(data.frame(model1_norm2, 0))
+mad1_2 <- mean(abs(as.matrix(dist_norm2)-as.matrix(md1_2)))
+mse1_2 <- mean((as.matrix(dist_norm2)-as.matrix(md1_2))^2)
+mxad1_2 <- max(abs(as.matrix(dist_norm2)-as.matrix(md1_2)))
+
+mad1_2
+mse1_2
+mxad1_2
+```
+
+```{r}
+#2d model
+##std normalization
+dist_norm1 = dist(data_norm1, method="minkowski", p=2)
+
+model2_norm1 <- cmdscale(dist_norm1,k=2)
+
+plot(model2_norm1, asp=1, ylim=c(-2,2), xlim=c(-6,3), xlab="" ,ylab="")
+textplot(model2_norm1[,1], model2_norm1[,2], data_withYear$Year,
+         asp=1, ylim=c(-2,2), xlim=c(-6,3), cex=0.6,
+         xlab="" ,ylab="")
+
+model2_norm1_e <- cmdscale(dist_norm1,k=2, eig=TRUE)
+plot(model2_norm1_e$eig, xlab="index", ylab="Eigenvalues")
+
+d2_norm1_gof <- cmdscale(dist_norm1, k=2, eig=TRUE)$GOF
+
+plot(dist_norm1, dist(model2_norm1))
+
+md2_1 = dist(data.frame(model2_norm1, 0))
+mad2_1 <- mean(abs(as.matrix(dist_norm1)-as.matrix(md2_1)))
+mse2_1 <- mean((as.matrix(dist_norm1)-as.matrix(md2_1))^2)
+mxad2_1 <- max(abs(as.matrix(dist_norm1)-as.matrix(md2_1)))
+
+mad2_1
+mse2_1
+mxad2_1
+```
+```{r}
+#2d model
+##max-min normalization
+dist_norm2 = dist(data_norm2, method="minkowski", p=2)
+
+model2_norm2 <- cmdscale(dist_norm2,k=2)
+
+plot(model2_norm2, asp=1, ylim=c(-1,1), xlim=c(-2,1), xlab="" ,ylab="")
+textplot(model2_norm2[,1], model2_norm2[,2], data_withYear$Year,
+         asp=1, ylim=c(-1,1), xlim=c(-2,1), cex=0.6,
+         xlab="" ,ylab="")
+
+model2_norm2_e <- cmdscale(dist_norm2,k=2, eig=TRUE)
+plot(model2_norm2_e$eig, xlab="index", ylab="Eigenvalues")
+
+d2_norm2_gof <- cmdscale(dist_norm2, k=2, eig=TRUE)$GOF
+
+plot(dist_norm2, dist(model2_norm2))
+
+md2_2 = dist(data.frame(model2_norm2, 0))
+mad2_2 <- mean(abs(as.matrix(dist_norm2)-as.matrix(md2_2)))
+mse2_2 <- mean((as.matrix(dist_norm2)-as.matrix(md2_2))^2)
+mxad2_2 <- max(abs(as.matrix(dist_norm2)-as.matrix(md2_2)))
+
+mad2_2
+mse2_2
+mxad2_2
+```
+```{r}
+#3d model
+##std normalization
+dist_norm1 = dist(data_norm1, method="minkowski", p=2)
+
+model3_norm1 <- cmdscale(dist_norm1,k=3)
+
+model3_norm1_e <- cmdscale(dist_norm1,k=3, eig=TRUE)
+plot(model3_norm1_e$eig, xlab="index", ylab="Eigenvalues")
+
+d3_norm1_gof <- cmdscale(dist_norm1, k=3, eig=TRUE)$GOF
+
+plot(dist_norm1, dist(model3_norm1))
+
+md3_1 = dist(data.frame(model3_norm1, 0))
+mad3_1 <- mean(abs(as.matrix(dist_norm1)-as.matrix(md3_1)))
+mse3_1 <- mean((as.matrix(dist_norm1)-as.matrix(md3_1))^2)
+mxad3_1 <- max(abs(as.matrix(dist_norm1)-as.matrix(md3_1)))
+
+mad3_1
+mse3_1
+mxad3_1
+```
+```{r}
+#3d model
+##max-min normalization
+dist_norm2 = dist(data_norm2, method="minkowski", p=2)
+
+model3_norm2 <- cmdscale(dist_norm2,k=3)
+
+model3_norm2_e <- cmdscale(dist_norm2,k=3, eig=TRUE)
+plot(model3_norm2_e$eig, xlab="index", ylab="Eigenvalues")
+
+d3_norm2_gof <- cmdscale(dist_norm2, k=3, eig=TRUE)$GOF
+
+plot(dist_norm2, dist(model3_norm2))
+
+md3_2 = dist(data.frame(model3_norm2, 0))
+mad3_2 <- mean(abs(as.matrix(dist_norm2)-as.matrix(md3_2)))
+mse3_2 <- mean((as.matrix(dist_norm2)-as.matrix(md3_2))^2)
+mxad3_2 <- max(abs(as.matrix(dist_norm2)-as.matrix(md3_2)))
+
+mad3_2
+mse3_2
+mxad3_2
+```
+
+
+```{r}
+library(xtable)
+Year <- data_withYear$Year
+d1 <- format(cbind(Year, data_norm1), digits = 3)
+# xtable(d1, type = "latex", file = "d1.tex")
+
+d2 <- format(cbind(Year, data_norm2), digits = 3)
+# xtable(d2, type = "latex", file = "d2.tex")
+```
+
+```{r}
+plot(c(mad1_1, mad2_1, mad3_1), xlab="dimension",
+     ylab="mean absolute difference for method 1")
+plot(c(mad1_2, mad2_2, mad3_2), xlab="dimension",
+     ylab="maximum absolute difference for method 2")
+
+plot(c(mse1_1, mse2_1, mse3_1), xlab="dimension",
+     ylab="mean square difference for method 1")
+plot(c(mse1_2, mse2_2, mse3_2), xlab="dimension",
+     ylab="mean square difference for method 2")
+
+plot(c(mxad1_1, mxad2_1, mxad3_1), xlab="dimension",
+     ylab="maximum absolute difference for method 1")
+plot(c(mxad1_2, mxad2_2, mxad3_2), xlab="dimension",
+     ylab="maximum absolute difference for method 2")
+```
+
